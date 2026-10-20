@@ -21,4 +21,9 @@ let buttons = ['C','del','%','+','7','8','9','-','4','5','6','*','1','2','3','/'
         buttonsGrid.appendChild(newButton);
     }
 
-    buttonsGrid.addEventListener('click', (e)=> {console.log(e.target)});
+    const display = document.querySelector('.display');
+    const results = document.querySelector('.result');
+
+    buttonsGrid.addEventListener('click', (e)=> {
+        display.innerText+=e.target.innerText;
+    });

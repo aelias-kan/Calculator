@@ -23,7 +23,60 @@ let buttons = ['C','del','%','+','7','8','9','-','4','5','6','*','1','2','3','/'
 
     const display = document.querySelector('.display');
     const results = document.querySelector('.result');
-
     buttonsGrid.addEventListener('click', (e)=> {
+    
+    const lastChar = display.innerText.slice(-1);
+    console.log(lastChar);
+    const operators = ['+','-','*','%','/','.']
+    const Target = e.target; 
+    if (e.target.tagName !== 'BUTTON') {return};
+    
+    let lastIndex = display.innerText.length-1;
+    const currentNumber = display.innerText.split(/[+\-*/%]/).pop();
+
+    if (Target.innerText === "." && currentNumber.includes(".")) {
+        return;
+    }
+    if (Target.innerText === "=")
+    {
+
+    }
+    else if(Target.innerText === 'del' || Target.innerText === 'C' )
+    {
+        if (Target.innerText === "C")
+        {
+            display.innerText ="";
+        }
+        else 
+        {
+            display.innerText = display.innerText.slice(0,-1);
+        }
+
+    }else if (display.innerText[lastIndex] === '+' || display.innerText[lastIndex] === '-' || display.innerText[lastIndex] === '*' || display.innerText[lastIndex] === '/' || display.innerText[lastIndex] === '%' || display.innerText[lastIndex] === '.')
+    {
+        if (operators.includes(lastChar) && operators.includes(e.target.innerText))
+        {
+            if(lastChar !== e.target.innerText){
+                display.innerText = display.innerText.slice(0,-1);
+                display.innerText+=e.target.innerText;
+                return;
+            }
+            else
+            {
+                return;
+            }
+        }
+                
+        if (display.innerText[lastIndex] === '.' && e.target.innerText === ".")
+        {
+            return;   
+        }else
+        {         
+            display.innerText += e.target.innerText;
+        }
+    }
+    else 
+    {
         display.innerText+=e.target.innerText;
-    });
+    }            
+});

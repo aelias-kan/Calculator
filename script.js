@@ -31,21 +31,62 @@ let buttons = ['C','del','%','+','7','8','9','-','4','5','6','*','1','2','3','/'
     const Target = e.target; 
     if (e.target.tagName !== 'BUTTON') {return};
     
+
     let lastIndex = display.innerText.length-1;
     const currentNumber = display.innerText.split(/[+\-*/%]/).pop();
 
     if (Target.innerText === "." && currentNumber.includes(".")) {
         return;
     }
+
     if (Target.innerText === "=")
     {
+        const expression = display.innerText;
+        results.innerText = expression;
+        results.innerText+=' =';
+        let expressionArray = expression.match(/\d+\.?\d*|[+\-*\/%]/g);
+        expressionArray.forEach((element,index) =>
+        {
+            if (operators.includes(element))
+            {
+                let operator = expressionArray[index];
+                leftOperand = Number(expressionArray[index-1]);
+                rightOperand = Number(expressionArray[index+1]);
+                let result;
+                switch(operator)
+                {
+                    case '*':
+                        result = leftOperand * rightOperand;
+                        expressionArray.splice(index - 1, 3, result);
+                        break;
+                    case '/':
+                         result = leftOperand / rightOperand;
+                        expressionArray.splice(index - 1, 3, result);
+                        break;
+                    case '%':
+                        result = leftOperand % rightOperand;
+                        expressionArray.splice(index - 1, 3, result);
+                        break;
+                    case '+':
+                        result = leftOperand + rightOperand;
+                        expressionArray.splice(index - 1, 3, result);
+                        break;
+                    case '-':
+                        result = leftOperand - rightOperand;
+                        expressionArray.splice(index - 1, 3, result);
+                        break;
+                }
+            }
 
+        });
+        display.innerText = expressionArray;
     }
     else if(Target.innerText === 'del' || Target.innerText === 'C' )
     {
         if (Target.innerText === "C")
         {
             display.innerText ="";
+            results.innerText ="";
         }
         else 
         {

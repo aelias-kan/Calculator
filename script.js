@@ -23,14 +23,31 @@ let buttons = ['C','del','%','+','7','8','9','-','4','5','6','*','1','2','3','/'
 
     const display = document.querySelector('.display');
     const results = document.querySelector('.result');
+    let calculationFinished = false;
+
     buttonsGrid.addEventListener('click', (e)=> {
     
     const lastChar = display.innerText.slice(-1);
     console.log(lastChar);
     const operators = ['+','-','*','%','/','.']
+    const num = ['0','1','2','3','4','5','6','7','8','9',]
     const Target = e.target; 
     if (e.target.tagName !== 'BUTTON') {return};
-    
+
+    if (calculationFinished && Target.innerText !=='C'&& Target.innerText !== 'del') {
+    if (num.includes(Target.innerText)) {
+        results.innerText += display.innerText;
+        display.innerText = Target.innerText;
+
+    } else if (operators.slice(0, 5).includes(Target.innerText)) {
+        display.innerText += Target.innerText;
+    }else{
+        return;
+    }
+
+    calculationFinished = false;
+    return;
+    }
 
     let lastIndex = display.innerText.length-1;
     const currentNumber = display.innerText.split(/[+\-*/%]/).pop();
@@ -41,45 +58,71 @@ let buttons = ['C','del','%','+','7','8','9','-','4','5','6','*','1','2','3','/'
 
     if (Target.innerText === "=")
     {
+
         const expression = display.innerText;
         results.innerText = expression;
         results.innerText+=' =';
+
+
         let expressionArray = expression.match(/\d+\.?\d*|[+\-*\/%]/g);
-        expressionArray.forEach((element,index) =>
+        for (let i =0; i<expressionArray.length;i++)
         {
-            if (operators.includes(element))
+            if (operators.includes(expressionArray[i]) && (expressionArray[i] === '*' || expressionArray[i] === '/' || expressionArray[i] === '%') )
             {
-                let operator = expressionArray[index];
-                leftOperand = Number(expressionArray[index-1]);
-                rightOperand = Number(expressionArray[index+1]);
+                let operator = expressionArray[i];
+                leftOperand = Number(expressionArray[i-1]);
+                rightOperand = Number(expressionArray[i+1]);
                 let result;
+
                 switch(operator)
                 {
                     case '*':
                         result = leftOperand * rightOperand;
-                        expressionArray.splice(index - 1, 3, result);
+                        expressionArray.splice(i - 1, 3, result);
+                        i--;
                         break;
                     case '/':
                          result = leftOperand / rightOperand;
-                        expressionArray.splice(index - 1, 3, result);
+                        expressionArray.splice(i - 1, 3, result);
+                        i--;
                         break;
                     case '%':
                         result = leftOperand % rightOperand;
-                        expressionArray.splice(index - 1, 3, result);
-                        break;
-                    case '+':
-                        result = leftOperand + rightOperand;
-                        expressionArray.splice(index - 1, 3, result);
-                        break;
-                    case '-':
-                        result = leftOperand - rightOperand;
-                        expressionArray.splice(index - 1, 3, result);
+                        expressionArray.splice(i - 1, 3, result);
+                        i--;
                         break;
                 }
-            }
 
-        });
+            }
+        }
+        for (let i =0; i<expressionArray.length;i++)
+        {
+            if (operators.includes(expressionArray[i]) && (expressionArray[i] === '+' || expressionArray[i] === '-'))
+            {
+                let operator = expressionArray[i];
+                leftOperand = Number(expressionArray[i-1]);
+                rightOperand = Number(expressionArray[i+1]);
+                let result;
+
+                switch(operator)
+                {
+                    case '+':
+                        result = leftOperand + rightOperand;
+                        expressionArray.splice(i - 1, 3, result);
+                        i--;
+                        break;
+                    case '-':
+                         result = leftOperand - rightOperand;
+                        expressionArray.splice(i - 1, 3, result);
+                        i--;
+                        break;
+                }
+
+            }
+        }
+        
         display.innerText = expressionArray;
+        calculationFinished = true;
     }
     else if(Target.innerText === 'del' || Target.innerText === 'C' )
     {
@@ -87,6 +130,7 @@ let buttons = ['C','del','%','+','7','8','9','-','4','5','6','*','1','2','3','/'
         {
             display.innerText ="";
             results.innerText ="";
+            calculationFinished =false;
         }
         else 
         {
